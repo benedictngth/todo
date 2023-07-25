@@ -4,10 +4,98 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -moz-osx-font-smoothing: grayscale; 
+
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+li{
+  list-style: none; 
+  margin-left: 0px;
+}
+
+button{
+  margin:2px 5px
+} 
+
+.header{
+  text-align: left;
+  padding: 10px 20px;
+  background-color: rgb(162, 147, 147); 
+  position: fixed;
+  width:100%;
+  z-index: 2;  
+  top:0px;
+}
+
+.notes{
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: space-between;
+}
+
+.indiv-note-box{ 
+  box-sizing: border-box;
+  border: solid black 3px;
+  margin:10px;
+  padding:20px; 
+  background-color: antiquewhite; 
+  display: inline-block; 
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  width:80% ;
+  
+} 
+
+.indiv-note{
+  margin:10px;
+  background-color: white;
+  padding:20px 
+}
+
+
+.input-name{
+  display: block;
+  height:20px;
+  border:0px;
+  padding:3px;
+  margin:5px;
+  font-size: 16px;
+  font-family:inherit;
+  background-color: rgba(172, 172, 172, 0.6);
+}
+
+.button{
+  font-family: inherit;
+  border: 0px;
+  background-color: rgb(80, 73, 88);
+  color: white;
+  cursor:pointer;
+}
+
+.add{
+  padding:8px 20px;
+  border-radius: 5px; 
+  font-weight: bold;
+  font-size: 18px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.edit{
+  padding:5px 10px;
+  border-radius: 8px;
+}
+
+ul{ 
+  padding-left: 0px;   
+  position:relative; 
+  top:50px
+} 
+
+
+
+
