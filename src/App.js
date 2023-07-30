@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 
 
-
+//TODO change useState notes and saveName
 
 const initialData = {
   notes:{
@@ -35,7 +35,7 @@ function App() {
   const arrayState = JSON.parse(localStorage.getItem('todo')); 
 
   
-  const [notes, setNotes] = useState(arrayState ?? defaultNotes); 
+  const [notes, setNotes] = useState(arrayState ?? defaultNotes);  
   const [id, setID] = useState(nextID) 
   const [filter,setFilter] = useState('')
 
@@ -162,7 +162,8 @@ function App() {
      {/* <ul className='notes'>{returnNotes}</ul>  original code*/} 
      {initialData.columnOrder.map(columnID => {
       const column = initialData.column[columnID]; 
-      const notes = column.noteOrder.map(note => initialData.notes[note]);
+      const notes = column.noteOrder.map(note => initialData.notes[note]); 
+      console.log(notes);
       return ( 
         <>
         <p>{column.id}</p>
