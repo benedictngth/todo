@@ -1,42 +1,45 @@
 import logo from './logo.svg';
-import './App.css';
+import './App.css'
 import "./index.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; 
+import IndivNote from "./indivNote"
 
 
 
 //TODO change useState notes and saveName
 
-const initialData = {
-  notes:{
-    'note-1': { id: 1, name: "first note", description: "testing" }, 
-    'note-2':{ id: 2, name: "second note", description: "testing" },
-  },
+const initialDragOrder = {
   column:{
     'column-1':{
       id:"column-1",
       noteOrder:['note-1', 'note-2'],
+    }, 
+    'column-2':{
+      id:"column-2",
+      noteOrder:['note-3']
     }
 
   },
-  columnOrder:['column-1'],
+  columnOrder:['column-1', 'column-2'],
 }
 
 
 function App() { 
-  let nextID = 3; 
+  let nextID = '3'; 
   
 
   const defaultNotes = [
-    { id: 1, name: "first note", description: "testing" },
-    { id: 2, name: "second note", description: "testing" }
-  ];
-  
-  const arrayState = JSON.parse(localStorage.getItem('todo')); 
+    {id: "note-1", name: "first note", description: "testing" },
+    { id: "note-2", name: "second note", description: "testing" },
+    { id: "note-3", name: "second note", description: "testing" }
+  ]; 
 
   
-  const [notes, setNotes] = useState(arrayState ?? defaultNotes);  
-  const [id, setID] = useState(nextID) 
+  const arrayState = JSON.parse(localStorage.getItem('todo')); 
+  
+  const [dragOrder, setDragOrder] = useState(initialDragOrder);
+  const [notes, setNotes] = useState(defaultNotes);  
+  const [noteID, setID] = useState(nextID) 
   const [filter,setFilter] = useState('')
 
 
@@ -47,102 +50,49 @@ function App() {
   }, [notes])
 
 
-
-  
-
-  function saveName(inputName,inputDescription, selectedNote){
-    setNotes(prevState => {
-        let newNote = prevState.map(note => 
-          selectedNote.id === note.id ? 
-          {...note, name: inputName, description:inputDescription}:note)
-        return newNote;
-    }
-  )}
-
-  function addNote(){
-    const newNote = {id:id, name:"new note", description:"new note"} 
-    setNotes(prevNote => [...prevNote, newNote])  
-    setID(id => id+=1);
-
-  }
-
-  function deleteNote(selectedNote){ 
-    setNotes(prevState=>{
-        const newNote = prevState.filter(note => note.id != selectedNote.id);
-        return newNote;
+  function addNote(columnID){ 
+    console.log('add note');
+    const newNote = {id:`note-${noteID}`, name:"new note", description:"new note"}  
+    setNotes(prevNote => [
+      ...prevNote, 
+      newNote
+    ])   
+    setDragOrder(prevDragOrder => {
+      let tempColumn = dragOrder.column[columnID];
+      tempColumn.noteOrder = [...tempColumn.noteOrder, `note-${noteID}`]; 
+      console.log(tempColumn.noteOrder)
+      const newDragOrder = {
+        column:{
+          ...prevDragOrder.column, 
+          [tempColumn.id]: tempColumn
+        },
+        columnOrder: prevDragOrder.columnOrder
+      }
+      return newDragOrder;
     })
+    setID(noteID => String(Number(noteID)+1));
+
   }
 
   function filterNote(e){
     setFilter(e.target.value) 
-    //const filterNote = notes.filter(note=>note.include(e.target.value))
-    //console.log(filterNote)
 
   }
 
-  function RenderNote(e) {
-    const note = e.note; 
-    return (
-      <div className='indiv-note content'>
-        <p>Name: {note.name}</p> 
-        <p>Description: <span>{note.description}</span></p>
-      </div>
-    );
-  } 
 
-  function EditNote(props){
-    console.log(props)
-    return(
-      <div className='indiv-note edit'>
-        {<input className = "input-name"value = {props.inputName} onChange={e=>props.setName(e.target.value)}></input>}
 
-        Description: {<input className = "input-name" value = {props.inputDescription} onChange={e=>props.setDescription(e.target.value)}></input>}
-        
-      </div>
-    )
 
-  }
+  //const returnNotes = notes.filter(note=> note.name.includes(filter)).map((note) => <IndivNote note={note} />)
   
-
-  function IndivNote(e) {
-    let note = e.note;
-    const [edit, setEdit] = useState(false);
-    const [inputName, setName] = useState(note.name);
-    const [inputDescription, setDescription] = useState(note.description);
-
-    return (
-      <li className = "indiv-note-box"key={note.id}>
-        {!edit && <RenderNote note={note} />}
-
-
-        {edit && <EditNote 
-        inputName = {inputName} 
-        setName = {setName} 
-        inputDescription = {inputDescription}
-        setDescription = {setDescription}/>}
-        
-        <button
-        className = "button edit"
-          onClick={() => { 
-            if (!edit){setEdit(true);}
-            else{
-              {saveName(inputName,inputDescription, note);}
-            }
-            
-          }}
-        >
-          {edit ? "Input" : "Edit"}
-        </button>
-        <button className='button edit' onClick={() => deleteNote(note)}>Delete</button>
-      </li>
-    );
-  
-        }
-
-  const returnNotes = notes.filter(note=> note.name.includes(filter)).map((note) => <IndivNote note={note} />)
-  function Column({column, notes}){
+  function Column({column, notes}){  
+    console.log(notes)
     return(
-      notes.filter(note=> note.name.includes(filter)).map((note) => <IndivNote note={note} />)
+      notes.filter(note=> note.name.includes(filter)).map((note) => <IndivNote 
+      column = {column} 
+      note={note} 
+      setNotes={setNotes}
+      setDragOrder={setDragOrder}
+      />)
     )
   }
   return (
@@ -150,7 +100,7 @@ function App() {
       
       <div className='header'>
       <h1 className='todo-main-title'>To Do App</h1>
-      {filter === '' &&<button className = "button add"onClick={()=>addNote()}>Add</button>}
+      {filter === '' &&<button className = "button add"onClick={()=>addNote(dragOrder.columnOrder[0])}>Add</button>}
       <input 
         placeholder='filter your list' 
         onChange={(e) => filterNote(e)} 
@@ -160,14 +110,14 @@ function App() {
      
      <div className='mainBody'>
      {/* <ul className='notes'>{returnNotes}</ul>  original code*/} 
-     {initialData.columnOrder.map(columnID => {
-      const column = initialData.column[columnID]; 
-      const notes = column.noteOrder.map(note => initialData.notes[note]); 
-      console.log(notes);
+     {dragOrder.columnOrder.map(columnID => {
+      const column = dragOrder.column[columnID]; 
+      const columnNotes = column.noteOrder.map(noteID => notes.find(note => note.id===noteID));
+      console.log(column);
       return ( 
         <>
         <p>{column.id}</p>
-        <Column column = {column} notes = {notes} />
+        <Column column = {column} notes = {columnNotes} />
         </>
       )
      })}
